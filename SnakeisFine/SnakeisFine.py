@@ -3,8 +3,8 @@ import random
 pg.init()
 pg.mixer.init()
 Sounds={'eat':'sounds\Eatting.ogg','die':'sounds\Dying.ogg'}
-#'music\RetroWave.mp3''music\Kda_-_Popstars.mp3''music\Savlonic-The Rider.mp3'
-Music = ['music\RetroWave.mp3',"""'music\Kda_-_Popstars.mp3','music\Savlonic-The Rider.mp3'"""]
+#'music\Retrowave\RetroWave.mp3',"""'music\Kda_-_Popstars.mp3','music\Savlonic-The Rider.mp3'"""
+Music = []
 playedMus=[]
 Snake_head = [pg.image.load('sprites\Snake_head_w.png'),pg.image.load('sprites\Snake_head_d.png'),
               pg.image.load('sprites\Snake_head_s.png'),pg.image.load('sprites\Snake_head_a.png')]
@@ -18,30 +18,26 @@ Snake_tail = [pg.image.load('sprites\Snake_tail_w.png'),pg.image.load('sprites\S
 
 Fruits=[pg.image.load('sprites\Fruit.png'),pg.image.load('sprites\GFruit.png')]
 
-def startsettings():
-    global menu, settings
-    menu=False
-    settings=True
 
-def playmusic(q,vol):
+
+def playmusic(vol):
     #chan=pg.mixer.Channel(0)
     global playedMus,Music,TimesPlayed
     if TimesPlayed==len(Music):
         playedMus=[]
         random.shuffle(Music)
-        q=1
         TimesPlayed=0
         return
-    name=Music[q]
+    name=Music[TimesPlayed]
     playedMus.append(name)
     TimesPlayed+=1
     pg.mixer.music.load(name)
     pg.mixer.music.set_volume(vol)
     pg.mixer.music.play(0)
     
-def testMusic(i):
+def testMusic():
     if pg.mixer.music.get_busy()==0:
-        playmusic(i,1)
+        playmusic(1)
     #sound=pg.mixer.Sound(name)
     #chan.set_volume(vol)
     #chan.play(sound,i)
@@ -50,6 +46,23 @@ def playsound(name,i,vol):
     sound=pg.mixer.Sound(name)
     chan.set_volume(vol)
     chan.play(sound,i)
+
+def fillMusic():
+    pg.mixer.music.stop()
+    global songtype, Music, TimesPlayed, playmusic
+    name=songtype
+    way='music\%s'% name
+    fileway=way+'\\'
+    way+='\songs.txt'
+    Songs=open(way,'r')
+    Music=[]
+    TimesPlayed=0
+    for line in Songs:
+        if '\n' in line:
+	        line=line[:len(line)-1:1]
+        Music.append(fileway+line)
+    playmusic(1)
+
 def text_objects(text, font,i):
     global sur
     textSurface = font.render(text, True,(i,i,i))
@@ -135,7 +148,10 @@ def playsnake():
     play=True
     menu=False
 
-
+def startsettings():
+    global menu, settings
+    menu=False
+    settings=True
 
     
     
@@ -146,12 +162,14 @@ intro=True
 settings=False
 
 TimesPlayed=0
+songtype='Retrowave'
+fillMusic()
 
 event=pg.event.get()
 mouse=pg.mouse.get_pos()
 click=pg.mouse.get_pressed()
 #random.shuffle(Music)
-testMusic(TimesPlayed)
+testMusic()
 while work :
     W=800
     H=600
@@ -176,7 +194,6 @@ while work :
                 intro=False
                 break
     while menu:
-        pg.time.delay(60)
         for event in pg.event.get():
                 keys=pg.key.get_pressed()
                 mouse=pg.mouse.get_pos()
@@ -192,20 +209,25 @@ while work :
 
         pg.display.update()
         sur.fill((0,0,0))
-        if pg.mixer.music.get_busy()==0:
-            testMusic(TimesPlayed)
+        testMusic()
 
     while settings:
         for event in pg.event.get():
             keys=pg.key.get_pressed()
-
+            mouse=pg.mouse.get_pos()
+            click=pg.mouse.get_pressed()
             if event.type == pg.QUIT or keys[pg.K_ESCAPE] :
                 menu = True
                 settings = False
                 break
-
+        songtype='Retrowave'
+        button('Retrowave',sur,W/2-47,H/2+40,170,32,(20,20,20),(50,50,50),n,fillMusic)
+        songtype='Pop'
+        button('Pop',sur,W/2-47,H/2+80,170,32,(20,20,20),(50,50,50),n,fillMusic)
         pg.display.update()
         sur.fill((0,0,0))
+        testMusic()
+
     if play==True:
         size=10
         speed=1*size
@@ -361,5 +383,4 @@ while work :
 
 
             polzinormalno() 
-            if pg.mixer.music.get_busy()==0:
-                testMusic(TimesPlayed)
+            testMusic()
