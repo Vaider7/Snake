@@ -18,6 +18,11 @@ Snake_tail = [pg.image.load('sprites\Snake_tail_w.png'),pg.image.load('sprites\S
 
 Fruits=[pg.image.load('sprites\Fruit.png'),pg.image.load('sprites\GFruit.png')]
 
+def startsettings():
+    global menu, settings
+    menu=False
+    settings=True
+
 def playmusic(q,vol):
     #chan=pg.mixer.Channel(0)
     global playedMus,Music,TimesPlayed
@@ -138,6 +143,7 @@ work=True
 play=False
 menu=True
 intro=True
+settings=False
 
 TimesPlayed=0
 
@@ -180,13 +186,26 @@ while work :
                     pg.quit()
                     break
         n=255
-        button('Play',sur,W/2-35,H/2-20,125,32,(0,50,0),(100,200,100),n,playsnake)
-        button('Quit',sur,W/2-35,H/2+20,125,32,(50,0,0),(200,100,100),n,quit)
-        
+        button('Play',sur,W/2-47,H/2-20,150,32,(0,50,0),(100,200,100),n,playsnake)
+        button('Quit',sur,W/2-47,H/2+20,150,32,(50,0,0),(200,100,100),n,quit)
+        button('Settings',sur,W/2-47,H/2+60,150,32,(20,20,20),(50,50,50),n,startsettings)
+
         pg.display.update()
         sur.fill((0,0,0))
         if pg.mixer.music.get_busy()==0:
             testMusic(TimesPlayed)
+
+    while settings:
+        for event in pg.event.get():
+            keys=pg.key.get_pressed()
+
+            if event.type == pg.QUIT or keys[pg.K_ESCAPE] :
+                menu = True
+                settings = False
+                break
+
+        pg.display.update()
+        sur.fill((0,0,0))
     if play==True:
         size=10
         speed=1*size
