@@ -1,2 +1,2 @@
 # Snake
-Snake by Automikand Vaider7
+## Snake by Automik and Vaider7
