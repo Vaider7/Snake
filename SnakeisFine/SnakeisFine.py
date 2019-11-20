@@ -98,7 +98,11 @@ def button(msg,sur,x,y,w,h,ic,ac,i,act=None):
     textSurf, textRect = text_objects(msg, smallText,i)
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     sur.blit(textSurf, textRect)
-
+def Textsome(msg,sur,x,y,w,h,i,Size):
+    smallText = pg.font.Font("ConnectionSerif.otf",Size)
+    textSurf, textRect = text_objects(msg, smallText,i)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    sur.blit(textSurf, textRect)
 def polzinormalno():
     global dirmove, tailmove, Slen
     for i in range(0,Slen-2):
@@ -112,9 +116,8 @@ def polzinormalno():
             dirmove[i]=7
 
 
-def drawsur():
+def drawobj():
     global sur,size, Fruit, GFruit, GFExis, move, dirmove, Slen, Snakehead, Snake, Snake_head, Snake_body
-    sur.fill((0,0,0))
     dir=0
     #Drawing Fruits
     if GFExis:
@@ -137,16 +140,23 @@ def drawsur():
         sur.blit(Snake_body[dirmove[i]],(Snake[i][0],Snake[i][1]))
 
     sur.blit(Snake_tail[tailmove[Slen-2]],(Snake[Slen-2][0],Snake[Slen-2][1]))
-    
-    pg.display.update()
-    
 
+def drawsur():
+    global sur,W ,H, size
+    pg.draw.lines(sur,(255,255,255),True,[(0,0),(0,H-1),(W-1,H-1),(W-1,0)])
+    pg.draw.line(sur,(255,255,255),(0,size*10),(W-1,size*10))
+
+    
+def surupdate():
+    global sur
+    pg.display.update()
+    sur.fill((0,0,0))
 
 def initFruit(W,H,size,Fruit,Snake,Snakehead,Slen):
     ex=True
     while ex:
-      fx=random.randint(10,(W/size-1))*size
-      fy=random.randint(10,(H/size-1))*size
+      fx=random.randint(10,((W/size)-1))*size
+      fy=random.randint(11,((H/size)-1))*size
       Fruit=[fx,fy]
       if Fruit in Snake:
           ex = True
@@ -222,7 +232,7 @@ while work :
         n=255
         button('Play',sur,W/2-47,H/2-20,150,32,(0,50,0),(100,200,100),n,choicelvl)
         button('Quit',sur,W/2-47,H/2+20,150,32,(50,0,0),(200,100,100),n,quit)
-        button('Settings',sur,W/2-47,H/2+60,150,32,(20,20,20),(50,50,50),n,startsettings)
+        button('Settings',sur,W/2-47,H/2+60,150,32,(30,30,30),(50,50,50),n,startsettings)
 
         pg.display.update()
         sur.fill((0,0,0))
@@ -240,13 +250,18 @@ while work :
         songtype='Retrowave'
         button('Retrowave',sur,W/2-47,H/2+40,170,32,(20,20,20),(50,50,50),n,fillMusic)
         songtype='Pop'
-        button('Pop',sur,W/2-47,H/2+80,170,32,(20,20,20),(50,50,50),n,fillMusic)
+        button('Pop',sur,W/2-47,H/2+80,170,32,(30,30,30),(60,60,60),n,fillMusic)
         pg.display.update()
         sur.fill((0,0,0))
         testMusic()
-
+    k=100
     while presettings:
-        pg.time.delay(60)
+        pg.time.delay(k)
+        if k == 100:
+            for p in range(0,10):
+                p+=1
+                if p == 9:
+                    k=0
         for event in pg.event.get():
             keys=pg.key.get_pressed()
             mouse=pg.mouse.get_pos()
@@ -275,7 +290,7 @@ while work :
         mult=3
         Counter2=Slen-2
         x = random.randint(Slen,int(W/size))*size
-        y = random.randint(0,int(H/size))*size
+        y = random.randint(10,int(H/size))*size
         sur=pg.display.set_mode(size=(W,H),flags = pg.FULLSCREEN)
         pg.display.set_caption('Snake')
         play=True
@@ -331,6 +346,7 @@ while work :
                 index+=1
                 if Snakehead==GFruit:
                     GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
+                    mult=random.randint(1,4)
                     for i in range(0,3*mult):
                             dirmove.append(int(dirmove[Slen-2])) 
                             tailmove.append(int(tailmove[Slen-2])) 
@@ -352,6 +368,7 @@ while work :
             if Snakehead==Fruit:
                 playsound(Sounds['eat'],0,1)
                 Fruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
+                mult=random.randint(1,4)
                 for i in range(0,mult):
                     Snake.append([Snake[Slen-2][0],Snake[Slen-2][1]]) 
                     dirmove.append(int(dirmove[Slen-2])) 
@@ -383,15 +400,30 @@ while work :
     
             x+=xm
             y+=ym
-            if x<size:
+            if x<0:
                 x=W-size
             if x>(W-size):
-                x=size
-            if y<size:
+                x=0
+            if y<size*10:
                 y=H-size
             if y>(H-size):
-                y=size
+                y=size*10
+            msg='Score:'+str(Slen)
+            Textsome(msg,sur,20,70,130,20,255,30)
+            file=open('record.txt','r')
+            line=file.read()
+            msg='Record:'+str(line)
+            Textsome(msg,sur,500,70,130,20,255,30)
+            if Slen > int(line):
+                file.close()
+                file=open('record.txt','w')
+                file.write(str(Slen))
+                file.close()
+
+
+            drawobj()
             drawsur()
+
 
            
             for i in range((Slen-2),(-1),-1):
@@ -419,6 +451,6 @@ while work :
             if move=='a':
                 tailmove[0]=3
 
-
+            surupdate()
             polzinormalno() 
             testMusic()
