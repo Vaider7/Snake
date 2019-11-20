@@ -59,8 +59,9 @@ def fillMusic():
     TimesPlayed=0
     for line in Songs:
         if '\n' in line:
-	        line=line[:len(line)-1:1]
+            line=line[:len(line)-1:1]
         Music.append(fileway+line)
+    random.shuffle(Music)
     playmusic(1)
 
 def text_objects(text, font,i):
