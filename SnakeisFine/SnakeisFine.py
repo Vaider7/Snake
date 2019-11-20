@@ -18,7 +18,23 @@ Snake_tail = [pg.image.load('sprites\Snake_tail_w.png'),pg.image.load('sprites\S
 
 Fruits=[pg.image.load('sprites\Fruit.png'),pg.image.load('sprites\GFruit.png')]
 
+def setlvlez():
+    global lvl, presettings, play
+    lvl=80
+    presettings=False
+    play=True
 
+def setlvlmed():
+    global lvl, presettings, play
+    lvl=60
+    presettings=False
+    play=True
+
+def setlvlhard():
+    global lvl, presettings, play
+    lvl=40
+    presettings=False
+    play=True
 
 def playmusic(vol):
     #chan=pg.mixer.Channel(0)
@@ -144,9 +160,9 @@ def quit():
     work=False
 
 
-def playsnake():
-    global play, menu
-    play=True
+def choicelvl():
+    global presettings, menu
+    presettings=True
     menu=False
 
 def startsettings():
@@ -155,7 +171,7 @@ def startsettings():
     settings=True
 
     
-    
+presettings=False  
 work=True
 play=False
 menu=True
@@ -204,7 +220,7 @@ while work :
                     pg.quit()
                     break
         n=255
-        button('Play',sur,W/2-47,H/2-20,150,32,(0,50,0),(100,200,100),n,playsnake)
+        button('Play',sur,W/2-47,H/2-20,150,32,(0,50,0),(100,200,100),n,choicelvl)
         button('Quit',sur,W/2-47,H/2+20,150,32,(50,0,0),(200,100,100),n,quit)
         button('Settings',sur,W/2-47,H/2+60,150,32,(20,20,20),(50,50,50),n,startsettings)
 
@@ -228,6 +244,24 @@ while work :
         pg.display.update()
         sur.fill((0,0,0))
         testMusic()
+
+    while presettings:
+        pg.time.delay(60)
+        for event in pg.event.get():
+            keys=pg.key.get_pressed()
+            mouse=pg.mouse.get_pos()
+            click=pg.mouse.get_pressed()
+            if keys[pg.K_ESCAPE] :
+                menu = True
+                presettings = False
+                break
+        lvl=60
+        button('Easy',sur,W-675,H/2-75,150,150,(0,70,0),(0,100,0),n,setlvlez)
+        button('Medium',sur,W/2-75,H/2-75,150,150,(70,70,0),(100,100,0),n,setlvlmed)
+        button('Hard',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,setlvlhard)
+        pg.display.update()
+        sur.fill((0,0,0))
+
 
     if play==True:
         size=10
@@ -273,14 +307,17 @@ while work :
         GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
         while play:
             pressed=False
-            pg.time.delay(60)
+            pg.time.delay(lvl)
             for event in pg.event.get():
                 keys=pg.key.get_pressed()
 
-                if event.type == pg.QUIT or keys[pg.K_ESCAPE] :
+                if event.type == pg.QUIT:
                     play = False
                     pg.quit()
                     break
+                if keys[pg.K_ESCAPE]:
+                    menu=True
+                    play=False
             Snakehead=[x,y]
             
             
