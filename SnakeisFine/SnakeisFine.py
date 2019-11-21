@@ -145,6 +145,17 @@ def drawsur():
     global sur,W ,H, size
     pg.draw.lines(sur,(255,255,255),True,[(0,0),(0,H-1),(W-1,H-1),(W-1,0)])
     pg.draw.line(sur,(255,255,255),(0,size*10),(W-1,size*10))
+    msg='Score:'+str(Score)
+    Textsome(msg,sur,20,70,130,20,255,30)
+    file=open('record.txt','r')
+    line=file.read()
+    msg='Record:'+str(line)
+    Textsome(msg,sur,500,70,130,20,255,30)
+    file.close()
+    if Score > int(line):
+        file=open('record.txt','w')
+        file.write(str(Slen))
+        file.close()
 
     
 def surupdate():
@@ -180,13 +191,24 @@ def startsettings():
     menu=False
     settings=True
 
-    
+def keepplaing():
+    global Pause
+    Pause=False
+
+def gotomenu():
+    global settings, play, menu, Pause
+    settings=False
+    play=False
+    Pause=False
+    menu=True
+   
 presettings=False  
 work=True
 play=False
 menu=True
 intro=True
 settings=False
+Pause=False
 
 TimesPlayed=0
 songtype='Retrowave'
@@ -332,9 +354,22 @@ while work :
                     pg.quit()
                     break
                 if keys[pg.K_ESCAPE]:
-                    menu=True
-                    play=False
+                    Pause=True
+        
             Snakehead=[x,y]
+
+            while Pause:
+                pg.time.delay(20)
+                for event in pg.event.get():
+                    keys=pg.key.get_pressed()
+                    mouse=pg.mouse.get_pos()
+                    click=pg.mouse.get_pressed()
+                drawobj()
+                drawsur()
+                button('Resume',sur,W-675,H/2-75,150,150,(0,70,0),(0,100,0),n,keepplaing)
+                button('Quit',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,gotomenu)
+                surupdate()
+                testMusic()
             
             if Slen > Score:
                 Score+=1
@@ -359,7 +394,6 @@ while work :
                     GFExis=False
 
 
-        
             if Snakehead in Snake:
                 playsound(Sounds['die'],0,0.7)
                 pg.time.delay(1000)
@@ -410,24 +444,12 @@ while work :
                 y=H-size
             if y>(H-size):
                 y=size*10
-            msg='Score:'+str(Score)
-            Textsome(msg,sur,20,70,130,20,255,30)
-            file=open('record.txt','r')
-            line=file.read()
-            msg='Record:'+str(line)
-            Textsome(msg,sur,500,70,130,20,255,30)
-            file.close()
-            if Score > int(line):
-                file=open('record.txt','w')
-                file.write(str(Slen))
-                file.close()
 
 
             drawobj()
             drawsur()
 
 
-           
             for i in range((Slen-2),(-1),-1):
                 Snake[i]=[(Snake[i-1][0]),(Snake[i-1][1])]
             Snake[0]=[Snakehead[0],Snakehead[1]]
