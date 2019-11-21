@@ -282,6 +282,7 @@ while work :
         size=10
         speed=1*size
         FPS = 10
+        Score=0
         Snakehead=[None,None]
         Snake=[]
         dirmove=[]
@@ -335,7 +336,8 @@ while work :
                     play=False
             Snakehead=[x,y]
             
-            
+            if Slen > Score:
+                Score+=1
             if counter>=5:
                 GFExis=True                                                
                 if index>100:
@@ -408,14 +410,14 @@ while work :
                 y=H-size
             if y>(H-size):
                 y=size*10
-            msg='Score:'+str(Slen)
+            msg='Score:'+str(Score)
             Textsome(msg,sur,20,70,130,20,255,30)
             file=open('record.txt','r')
             line=file.read()
             msg='Record:'+str(line)
             Textsome(msg,sur,500,70,130,20,255,30)
-            if Slen > int(line):
-                file.close()
+            file.close()
+            if Score > int(line):
                 file=open('record.txt','w')
                 file.write(str(Slen))
                 file.close()
