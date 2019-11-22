@@ -367,7 +367,7 @@ while work :
                 drawobj()
                 drawsur()
                 button('Resume',sur,W-675,H/2-75,150,150,(0,70,0),(0,100,0),n,keepplaing)
-                button('Quit',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,gotomenu)
+                button('Menu',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,gotomenu)
                 surupdate()
                 testMusic()
             
@@ -408,7 +408,7 @@ while work :
                 for i in range(0,mult):
                     Snake.append([Snake[Slen-2][0],Snake[Slen-2][1]]) 
                     dirmove.append(int(dirmove[Slen-2])) 
-                    tailmove.append(int(tailmove[Slen-2]))   #Snake.append([Snake[Slen-3][0],Snake[Slen-3][1]])
+                    tailmove.append(int(tailmove[Slen-2]))   
                 Slen+=mult
                 counter+=1
 
