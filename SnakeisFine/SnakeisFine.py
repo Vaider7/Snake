@@ -254,9 +254,9 @@ while work :
                     break
 
         n=255
-        button('Play',sur,W/2-47,H/2-20,150,32,(0,50,0),(100,200,100),n,choicelvl)
-        button('Quit',sur,W/2-47,H/2+20,150,32,(50,0,0),(200,100,100),n,quit)
-        button('Settings',sur,W/2-47,H/2+60,150,32,(30,30,30),(50,50,50),n,startsettings)
+        button('Play',sur,W/2-75,H/2-25,150,40,(0,50,0),(100,200,100),n,choicelvl)
+        button('Quit',sur,W/2-75,H/2+20,150,40,(50,0,0),(200,100,100),n,quit)
+        button('Settings',sur,W/2-75,H/2+65,150,40,(30,30,30),(50,50,50),n,startsettings)
 
         surupdate()
         testMusic()
@@ -399,22 +399,22 @@ while work :
                 counter+=1
 
             if not pressed:
-                if keys[pg.K_w] and (not(move == 's')):
+                if (keys[pg.K_w] or keys[pg.K_UP]) and (not(move == 's')):
                     move = 'w'
                     ym=-speed
                     xm=0
                     pressed=True
-                elif keys[pg.K_s] and (not(move == 'w')):
+                elif (keys[pg.K_s] or keys[pg.K_DOWN]) and (not(move == 'w')):
                     move = 's'
                     ym=speed
                     xm=0
                     pressed=True
-                elif keys[pg.K_a] and (not(move == 'd')):
+                elif (keys[pg.K_a] or keys[pg.K_LEFT]) and (not(move == 'd')):
                     move = 'a'
                     xm=-speed
                     ym=0
                     pressed=True
-                elif keys[pg.K_d] and (not(move == 'a')):
+                elif (keys[pg.K_d] or keys[pg.K_RIGHT]) and (not(move == 'a')):
                     move = 'd'
                     xm=speed
                     ym=0
@@ -431,10 +431,8 @@ while work :
             if y>(H-size):
                 y=size*10
 
-
             drawobj()
             drawsur()
-
 
             for i in range((Slen-2),(-1),-1):
                 Snake[i]=[(Snake[i-1][0]),(Snake[i-1][1])]
@@ -472,7 +470,7 @@ while work :
                      if event.type == pg.MOUSEBUTTONUP:
                          click=event.button
 
-                button('Resume',sur,W/2-75,H/2-100,150,40,(0,70,0),(0,100,0),n,keepplaing)
-                button('Menu',sur,W/2-75,H/2,150,40,(70,0,0),(100,0,0),n,gotomenu)
+                button('Resume',sur,W/2-75,H/2-20,150,40,(0,70,0),(0,100,0),n,keepplaing)
+                button('Menu',sur,W/2-75,H/2+25,150,40,(70,0,0),(100,0,0),n,gotomenu)
                 testMusic()
            
