@@ -3,7 +3,6 @@ import random
 pg.init()
 pg.mixer.init()
 Sounds={'eat':'sounds\Eatting.ogg','die':'sounds\Dying.ogg'}
-#'music\Retrowave\RetroWave.mp3',"""'music\Kda_-_Popstars.mp3','music\Savlonic-The Rider.mp3'"""
 Music = []
 playedMus=[]
 Snake_head = [pg.image.load('sprites\Snake_head_w.png'),pg.image.load('sprites\Snake_head_d.png'),
@@ -37,7 +36,6 @@ def setlvlhard():
     play=True
 
 def playmusic(vol):
-    #chan=pg.mixer.Channel(0)
     global playedMus,Music,TimesPlayed
     if TimesPlayed==len(Music):
         playedMus=[]
@@ -54,14 +52,11 @@ def playmusic(vol):
 def testMusic():
     if pg.mixer.music.get_busy()==0:
         playmusic(1)
-    #sound=pg.mixer.Sound(name)
-    #chan.set_volume(vol)
-    #chan.play(sound,i)
+
 def playsound(name,i,vol):
-    chan=pg.mixer.Channel(1)
     sound=pg.mixer.Sound(name)
-    chan.set_volume(vol)
-    chan.play(sound,i)
+    sound.set_volume(vol)
+    sound.play(i)
 
 def fillMusic():
     pg.mixer.music.stop()
@@ -89,8 +84,9 @@ def button(msg,sur,x,y,w,h,ic,ac,i,act=None):
     global mouse, click
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
         pg.draw.rect(sur, ac,(x,y,w,h))
-        if click[0] == 1 and act != None:
-            act()
+        if click == 1 and act != None:
+            click = 0
+            act()      
     else:
         pg.draw.rect(sur, ic,(x,y,w,h))
           
@@ -98,11 +94,13 @@ def button(msg,sur,x,y,w,h,ic,ac,i,act=None):
     textSurf, textRect = text_objects(msg, smallText,i)
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     sur.blit(textSurf, textRect)
+
 def Textsome(msg,sur,x,y,w,h,i,Size):
     smallText = pg.font.Font("ConnectionSerif.otf",Size)
     textSurf, textRect = text_objects(msg, smallText,i)
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
     sur.blit(textSurf, textRect)
+
 def polzinormalno():
     global dirmove, tailmove, Slen
     for i in range(0,Slen-2):
@@ -119,13 +117,12 @@ def polzinormalno():
 def drawobj():
     global sur,size, Fruit, GFruit, GFExis, move, dirmove, Slen, Snakehead, Snake, Snake_head, Snake_body
     dir=0
-    #Drawing Fruits
+
     if GFExis:
         sur.blit(Fruits[1],(GFruit[0],GFruit[1]))
 
     sur.blit(Fruits[0],(Fruit[0],Fruit[1]))
 
-    #Drawing Snake
     if move=='w':
         dir=0
     if move=='d':
@@ -134,6 +131,7 @@ def drawobj():
         dir=2
     if move=='a':
         dir=3
+
     sur.blit(Snake_head[dir],(Snakehead[0],Snakehead[1]))
 
     for i in range(0,Slen-2):
@@ -180,7 +178,6 @@ def quit():
     menu=False
     work=False
 
-
 def choicelvl():
     global presettings, menu
     presettings=True
@@ -199,8 +196,8 @@ def gotomenu():
     global settings, play, menu, Pause
     settings=False
     play=False
-    Pause=False
     menu=True
+    Pause=False
    
 presettings=False  
 work=True
@@ -214,16 +211,15 @@ TimesPlayed=0
 songtype='Retrowave'
 fillMusic()
 
-event=pg.event.get()
 mouse=pg.mouse.get_pos()
 click=pg.mouse.get_pressed()
-#random.shuffle(Music)
 testMusic()
 while work :
     W=800
     H=600
     pg.init()
     sur=pg.display.set_mode(size=(W,H),flags=pg.FULLSCREEN)
+
     while intro:
         for i in range(0,256):
             largeText = pg.font.SysFont('times new roman', 40)
@@ -242,62 +238,67 @@ while work :
                 menu=True
                 intro=False
                 break
+
     while menu:
         for event in pg.event.get():
                 keys=pg.key.get_pressed()
-                mouse=pg.mouse.get_pos()
-                click=pg.mouse.get_pressed()
+                if event.type == pg.MOUSEMOTION:
+                         mouse=event.pos
+                if event.type == pg.MOUSEBUTTONUP:
+                         mouse=event.pos
+                         click=event.button
+                         print(click)
                 if event.type == pg.QUIT or keys[pg.K_ESCAPE]:
                     play = False
                     pg.quit()
                     break
+
         n=255
         button('Play',sur,W/2-47,H/2-20,150,32,(0,50,0),(100,200,100),n,choicelvl)
         button('Quit',sur,W/2-47,H/2+20,150,32,(50,0,0),(200,100,100),n,quit)
         button('Settings',sur,W/2-47,H/2+60,150,32,(30,30,30),(50,50,50),n,startsettings)
 
-        pg.display.update()
-        sur.fill((0,0,0))
+        surupdate()
         testMusic()
 
     while settings:
         for event in pg.event.get():
             keys=pg.key.get_pressed()
-            mouse=pg.mouse.get_pos()
-            click=pg.mouse.get_pressed()
+            if event.type == pg.MOUSEMOTION:
+                         mouse=event.pos
+            if event.type == pg.MOUSEBUTTONUP:
+                         mouse=event.pos
+                         click=event.button
             if event.type == pg.QUIT or keys[pg.K_ESCAPE] :
                 menu = True
                 settings = False
                 break
         songtype='Retrowave'
-        button('Retrowave',sur,W/2-47,H/2+40,170,32,(20,20,20),(50,50,50),n,fillMusic)
+        button('Retrowave',sur,W/2-47,H/2+40,170,32,(30,30,30),(60,60,60),n,fillMusic)
         songtype='Pop'
         button('Pop',sur,W/2-47,H/2+80,170,32,(30,30,30),(60,60,60),n,fillMusic)
-        pg.display.update()
-        sur.fill((0,0,0))
+        songtype = 'OffMusic'
+        button('Off Music',sur,W/2-47,H/2+120,170,32,(30,30,30),(60,60,60),n,fillMusic)
+        surupdate()
         testMusic()
-    k=100
+
     while presettings:
-        pg.time.delay(k)
-        if k == 100:
-            for p in range(0,10):
-                p+=1
-                if p == 9:
-                    k=0
         for event in pg.event.get():
             keys=pg.key.get_pressed()
-            mouse=pg.mouse.get_pos()
-            click=pg.mouse.get_pressed()
+            if event.type == pg.MOUSEMOTION:
+                         mouse=event.pos
+            if event.type == pg.MOUSEBUTTONUP:
+                         mouse=event.pos
+                         click=event.button
             if keys[pg.K_ESCAPE] :
                 menu = True
                 presettings = False
                 break
-        lvl=60
+        
         button('Easy',sur,W-675,H/2-75,150,150,(0,70,0),(0,100,0),n,setlvlez)
         button('Medium',sur,W/2-75,H/2-75,150,150,(70,70,0),(100,100,0),n,setlvlmed)
         button('Hard',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,setlvlhard)
-        pg.display.update()
-        sur.fill((0,0,0))
+        surupdate()
 
 
     if play==True:
@@ -343,34 +344,20 @@ while work :
         index=0
         Fruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
         GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
+
         while play:
-            pressed=False
+            pressed = False
             pg.time.delay(lvl)
             for event in pg.event.get():
                 keys=pg.key.get_pressed()
-
                 if event.type == pg.QUIT:
                     play = False
                     pg.quit()
                     break
-                if keys[pg.K_ESCAPE]:
-                    Pause=True
-        
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_ESCAPE:
+                        Pause = True
             Snakehead=[x,y]
-
-            while Pause:
-                pg.time.delay(20)
-                for event in pg.event.get():
-                    keys=pg.key.get_pressed()
-                    mouse=pg.mouse.get_pos()
-                    click=pg.mouse.get_pressed()
-                drawobj()
-                drawsur()
-                button('Resume',sur,W-675,H/2-75,150,150,(0,70,0),(0,100,0),n,keepplaing)
-                button('Menu',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,gotomenu)
-                surupdate()
-                testMusic()
-            
             if Slen > Score:
                 Score+=1
             if counter>=5:
@@ -392,7 +379,6 @@ while work :
                     counter=0
                     index=0
                     GFExis=False
-
 
             if Snakehead in Snake:
                 playsound(Sounds['die'],0,0.7)
@@ -478,3 +464,15 @@ while work :
             surupdate()
             polzinormalno() 
             testMusic()
+            while Pause:
+                surupdate()
+                for event in pg.event.get():
+                     if event.type == pg.MOUSEMOTION:
+                         mouse=event.pos
+                     if event.type == pg.MOUSEBUTTONUP:
+                         click=event.button
+
+                button('Resume',sur,W/2-75,H/2-100,150,40,(0,70,0),(0,100,0),n,keepplaing)
+                button('Menu',sur,W/2-75,H/2,150,40,(70,0,0),(100,0,0),n,gotomenu)
+                testMusic()
+           
