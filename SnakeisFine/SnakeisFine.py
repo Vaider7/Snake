@@ -1,10 +1,8 @@
 import pygame as pg
 import random        
 pg.init()
-pg.mixer.init()
 Sounds={'eat':'sounds\Eatting.ogg','die':'sounds\Dying.ogg'}
 Music = []
-playedMus=[]
 Snake_head = [pg.image.load('sprites\Snake_head_w.png'),pg.image.load('sprites\Snake_head_d.png'),
               pg.image.load('sprites\Snake_head_s.png'),pg.image.load('sprites\Snake_head_a.png')]
 Snake_body = [pg.image.load('sprites\Snake_body_v.png'),pg.image.load('sprites\Snake_body_h.png'),
@@ -38,12 +36,10 @@ def setlvlhard():
 def playmusic(vol):
     global playedMus,Music,TimesPlayed
     if TimesPlayed==len(Music):
-        playedMus=[]
         random.shuffle(Music)
         TimesPlayed=0
         return
     name=Music[TimesPlayed]
-    playedMus.append(name)
     TimesPlayed+=1
     pg.mixer.music.load(name)
     pg.mixer.music.set_volume(vol)
@@ -74,6 +70,10 @@ def fillMusic():
         Music.append(fileway+line)
     random.shuffle(Music)
     playmusic(1)
+    file=open('songtype.txt','w')
+    file.write(songtype)
+    file.close()
+
 
 def text_objects(text, font,i):
     global sur
@@ -148,7 +148,7 @@ def drawsur():
     file=open('record.txt','r')
     line=file.read()
     msg='Record:'+str(line)
-    Textsome(msg,sur,500,70,130,20,255,30)
+    Textsome(msg,sur,620,70,130,20,255,30)
     file.close()
     if Score > int(line):
         file=open('record.txt','w')
@@ -206,9 +206,12 @@ menu=True
 intro=True
 settings=False
 Pause=False
+gameover=False
 
 TimesPlayed=0
-songtype='Retrowave'
+file=open('songtype.txt','r')
+songtype=file.read()
+file.close()
 fillMusic()
 
 mouse=pg.mouse.get_pos()
@@ -217,24 +220,23 @@ testMusic()
 while work :
     W=800
     H=600
-    pg.init()
+    #pg.init()
     sur=pg.display.set_mode(size=(W,H),flags=pg.FULLSCREEN)
 
+    i=0
     while intro:
-        for i in range(0,256):
-            largeText = pg.font.SysFont('times new roman', 40)
-            TextSurf, TextRect=text_objects('The Game by Aytomik and Vaider',largeText,i)
-            TextRect.center = ((400),(300))
-            sur.blit(TextSurf, TextRect)
-            pg.display.update()
-            sur.fill((0,0,0))
-            pg.time.delay(15)
-            if i == 225:
-                menu=True
-                intro=False
-            event=pg.event.get()
-            keys=pg.key.get_pressed()
-            if keys[pg.K_SPACE]:
+        i+=1
+        largeText = pg.font.SysFont('times new roman', 40)
+        TextSurf, TextRect=text_objects('The Game by Aytomik and Vaider',largeText,i)
+        TextRect.center = ((400),(300))
+        sur.blit(TextSurf, TextRect)
+        surupdate()
+        pg.time.delay(15)
+        if i == 225:
+            menu=True
+            intro=False
+        for event in pg.event.get():
+            if event.type==pg.KEYUP or event.type==pg.MOUSEBUTTONDOWN:
                 menu=True
                 intro=False
                 break
@@ -247,7 +249,6 @@ while work :
                 if event.type == pg.MOUSEBUTTONUP:
                          mouse=event.pos
                          click=event.button
-                         print(click)
                 if event.type == pg.QUIT or keys[pg.K_ESCAPE]:
                     play = False
                     pg.quit()
@@ -259,8 +260,8 @@ while work :
         button('Settings',sur,W/2-75,H/2+65,150,40,(30,30,30),(50,50,50),n,startsettings)
 
         surupdate()
+        songtype= open('songtype.txt','r')
         testMusic()
-
     while settings:
         for event in pg.event.get():
             keys=pg.key.get_pressed()
@@ -269,7 +270,7 @@ while work :
             if event.type == pg.MOUSEBUTTONUP:
                          mouse=event.pos
                          click=event.button
-            if event.type == pg.QUIT or keys[pg.K_ESCAPE] :
+            if event.type == pg.QUIT or keys[pg.K_ESCAPE]:
                 menu = True
                 settings = False
                 break
@@ -299,8 +300,6 @@ while work :
         button('Medium',sur,W/2-75,H/2-75,150,150,(70,70,0),(100,100,0),n,setlvlmed)
         button('Hard',sur,W-275,H/2-75,150,150,(70,0,0),(100,0,0),n,setlvlhard)
         surupdate()
-
-
     if play==True:
         size=10
         speed=1*size
@@ -369,6 +368,7 @@ while work :
                     GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
                 index+=1
                 if Snakehead==GFruit:
+                    playsound(Sounds['eat'],0,1)
                     GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
                     mult=random.randint(1,4)
                     for i in range(0,3*mult):
@@ -382,10 +382,9 @@ while work :
 
             if Snakehead in Snake:
                 playsound(Sounds['die'],0,0.7)
-                pg.time.delay(1000)
-                menu=True
+                pg.time.delay(3500)
                 play = False
-                break
+                gameover=True
 
             if Snakehead==Fruit:
                 playsound(Sounds['eat'],0,1)
@@ -473,4 +472,24 @@ while work :
                 button('Resume',sur,W/2-75,H/2-20,150,40,(0,70,0),(0,100,0),n,keepplaing)
                 button('Menu',sur,W/2-75,H/2+25,150,40,(70,0,0),(100,0,0),n,gotomenu)
                 testMusic()
+    blink=0
+    blink_phase=0
+    while gameover:
+        Textsome('Game over',sur, W/2-50, H/2-150,100,300,255,40)
+        Textsome('Press any key to continue',sur, W/2-50, H/2+50,100,300,blink,22)
+        Textsome('Your score:'+str(Score),sur, W/2-50, H/2-75,100,300,255,26)
+        surupdate()
+        if blink_phase == 0:
+            blink+=1
+            if blink==255:
+                blink_phase=1
+        else:
+            blink-=1
+            if blink==0:
+                blink_phase=0
+        
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONUP:
+                gameover=False
+                menu=True
            
