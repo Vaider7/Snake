@@ -161,17 +161,24 @@ def surupdate():
     pg.display.update()
     sur.fill((0,0,0))
 
-def initFruit(W,H,size,Fruit,Snake,Snakehead,Slen):
+def initFruit(W,H,size,Fruit1,Snake,Snakehead,Slen):
+    global GFMake, GFruit, Fruit
     ex=True
     while ex:
-      fx=random.randint(10,((W/size)-1))*size
-      fy=random.randint(11,((H/size)-1))*size
-      Fruit=[fx,fy]
-      if Fruit in Snake:
-          ex = True
-      else:
-          ex=False
-    return Fruit
+        fx=random.randint(10,((W/size)-1))*size
+        fy=random.randint(11,((H/size)-1))*size
+        Fruit1=[fx,fy]
+        if GFMake:
+            if Fruit1 in Snake or Fruit1==Fruit:
+                ex = True
+            else:
+                ex=False
+        else:
+            if Fruit1 in Snake or Fruit1==GFruit:
+                ex = True
+            else:
+                ex=False
+    return Fruit1
       
 def quit():
     global menu, work
@@ -338,6 +345,7 @@ while work :
         Fruit=[None,None]
         GFruit=[None,None]
         GFExis=False
+        GFMake=False
         bool=True
         counter=0
         index=0
@@ -361,15 +369,19 @@ while work :
                 Score+=1
             if counter>=5:
                 GFExis=True                                                
-                if index>100:
+                if index>(5000/lvl):
                     counter=0
                     index=0
                     GFExis=False
+                    GFMake=True
                     GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
+                    GFMake=False
                 index+=1
                 if Snakehead==GFruit:
                     playsound(Sounds['eat'],0,1)
+                    GFMake=True
                     GFruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
+                    GFMake=False
                     mult=random.randint(1,4)
                     for i in range(0,3*mult):
                             dirmove.append(int(dirmove[Slen-2])) 
@@ -389,7 +401,7 @@ while work :
             if Snakehead==Fruit:
                 playsound(Sounds['eat'],0,1)
                 Fruit=initFruit(W,H,size,Fruit,Snake,Snakehead,Slen)
-                mult=random.randint(1,4)
+                mult=random.randint(1,mult)
                 for i in range(0,mult):
                     Snake.append([Snake[Slen-2][0],Snake[Slen-2][1]]) 
                     dirmove.append(int(dirmove[Slen-2])) 
