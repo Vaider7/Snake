@@ -282,11 +282,11 @@ while work :
                 settings = False
                 break
         songtype='Retrowave'
-        button('Retrowave',sur,W/2-47,H/2+40,170,32,(30,30,30),(60,60,60),n,fillMusic)
+        button('Retrowave',sur,W/2-95,H/2-35,190,40,(30,30,30),(60,60,60),n,fillMusic)
         songtype='Pop'
-        button('Pop',sur,W/2-47,H/2+80,170,32,(30,30,30),(60,60,60),n,fillMusic)
+        button('Pop',sur,W/2-95,H/2+10,190,40,(30,30,30),(60,60,60),n,fillMusic)
         songtype = 'OffMusic'
-        button('Off Music',sur,W/2-47,H/2+120,170,32,(30,30,30),(60,60,60),n,fillMusic)
+        button('Off Music',sur,W/2-95,H/2+55,190,40,(30,30,30),(60,60,60),n,fillMusic)
         surupdate()
         testMusic()
 
@@ -487,6 +487,8 @@ while work :
     blink=0
     blink_phase=0
     while gameover:
+        gameover = True
+        menu = False
         Textsome('Game over',sur, W/2-50, H/2-150,100,300,255,40)
         Textsome('Press any key to continue',sur, W/2-50, H/2+50,100,300,blink,22)
         Textsome('Your score:'+str(Score),sur, W/2-50, H/2-75,100,300,255,26)
@@ -504,4 +506,3 @@ while work :
             if event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONUP:
                 gameover=False
                 menu=True
-           
