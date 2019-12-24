@@ -281,12 +281,18 @@ while work :
                 menu = True
                 settings = False
                 break
+        heights=60
+        first=150
         songtype='Retrowave'
-        button('Retrowave',sur,W/2-95,H/2-35,190,40,(30,30,30),(60,60,60),n,fillMusic)
+        button('Retrowave',sur,W/2-95,first,190,50,(30,30,30),(60,60,60),n,fillMusic)
+        songtype='Fun'
+        button('Fun',sur,W/2-95,first+heights,190,50,(30,30,30),(60,60,60),n,fillMusic)
         songtype='Pop'
-        button('Pop',sur,W/2-95,H/2+10,190,40,(30,30,30),(60,60,60),n,fillMusic)
+        button('Pop',sur,W/2-95,first+heights*2,190,50,(30,30,30),(60,60,60),n,fillMusic)
+        songtype='8-bit'
+        button('8-bit',sur,W/2-95,first+heights*3,190,50,(30,30,30),(60,60,60),n,fillMusic)
         songtype = 'OffMusic'
-        button('Off Music',sur,W/2-95,H/2+55,190,40,(30,30,30),(60,60,60),n,fillMusic)
+        button('Off Music',sur,W/2-95,first+heights*4,190,50,(30,30,30),(60,60,60),n,fillMusic)
         surupdate()
         testMusic()
 
